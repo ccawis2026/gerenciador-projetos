@@ -1,0 +1,576 @@
+/* ==========================================================================
+SYSTEM CORE: NEURAL OPERATING SYSTEM v4.0 (DARK FUTURISTIC HUD)
+========================================================================== */
+
+:root {
+/* Paleta Neon & Cyberpunk */
+--bg-darkness: #030712;
+--bg-surface: rgba(10, 15, 30, 0.85);
+--bg-surface-hover: rgba(17, 24, 39, 0.9);
+--bg-glass: rgba(15, 23, 42, 0.65);
+--bg-input: rgba(6, 11, 25, 0.9);
+
+/* Neon Glowing Accents */
+--neon-cyan: #00f0ff;
+--neon-purple: #a855f7;
+--neon-pink: #ff007f;
+--neon-green: #00ff66;
+--neon-amber: #ffaa00;
+--neon-red: #ff334b;
+
+/* Glow Effects & Shadows */
+--glow-cyan: 0 0 15px rgba(0, 240, 255, 0.4), 0 0 30px rgba(0, 240, 255, 0.2);
+--glow-purple: 0 0 15px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.2);
+--glow-pink: 0 0 15px rgba(255, 0, 127, 0.4);
+--glow-red: 0 0 15px rgba(255, 51, 75, 0.4);
+
+/* Typography & Borders */
+--text-primary: #f8fafc;
+--text-secondary: #94a3b8;
+--text-dim: #475569;
+--border-neon: rgba(0, 240, 255, 0.3);
+--border-subtle: rgba(255, 255, 255, 0.08);
+
+/* HUD Radii & Clips */
+--radius-hud: 14px;
+--radius-sm: 8px;
+}
+
+/* Scrollbar Futurista */
+::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+::-webkit-scrollbar-track {
+background: var(--bg-darkness);
+}
+::-webkit-scrollbar-thumb {
+background: rgba(0, 240, 255, 0.3);
+border-radius: 3px;
+box-shadow: inset 0 0 6px var(--neon-cyan);
+}
+::-webkit-scrollbar-thumb:hover {
+background: var(--neon-cyan);
+}
+
+/* Reset Global & Grid Cyber */
+
+*,
+*::before,
+*::after {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+body {
+font-family: 'Space Grotesk', 'Fira Code', system-ui, -apple-system, sans-serif;
+background-color: var(--bg-darkness);
+background-image:
+linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+background-size: 32px 32px, 32px 32px, 100% 100%;
+background-attachment: fixed;
+color: var(--text-primary);
+line-height: 1.5;
+padding: 40px 16px;
+display: flex;
+justify-content: center;
+align-items: flex-start;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Layout Container HUD com Linhas Sci-Fi */
+.container {
+position: relative;
+width: 100%;
+max-width: 820px;
+background: var(--bg-surface);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+padding: 36px;
+border-radius: var(--radius-hud);
+border: 1px solid var(--border-neon);
+box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 240, 255, 0.05);
+display: flex;
+flex-direction: column;
+gap: 28px;
+animation: hudPowerOn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.container::before {
+content: '';
+position: absolute;
+top: -1px;
+left: 20px;
+right: 20px;
+height: 2px;
+background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+}
+
+/* Título com Efeito Glitch / Holograma */
+h1 {
+font-size: 2rem;
+font-weight: 900;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+color: #fff;
+text-align: center;
+position: relative;
+text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+}
+
+h1 span.ai-text {
+background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6));
+}
+
+/* Painel da Barra de Status Avançada (Telemetry HUD) */
+.status {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+gap: 12px;
+padding: 16px;
+background: rgba(4, 9, 20, 0.8);
+border: 1px solid rgba(0, 240, 255, 0.2);
+border-radius: var(--radius-sm);
+font-size: 0.8rem;
+font-family: monospace;
+}
+
+.status-item {
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+
+.status-label {
+color: var(--text-dim);
+text-transform: uppercase;
+letter-spacing: 0.1em;
+font-size: 0.7rem;
+}
+
+.status-value {
+display: flex;
+align-items: center;
+gap: 6px;
+font-weight: 700;
+}
+
+.status.ok .status-value::before {
+content: '';
+width: 8px;
+height: 8px;
+background-color: var(--neon-green);
+border-radius: 50%;
+box-shadow: 0 0 10px var(--neon-green);
+animation: pulseGlow 1.5s infinite;
+}
+
+.status.falha .status-value::before {
+content: '';
+width: 8px;
+height: 8px;
+background-color: var(--neon-red);
+border-radius: 50%;
+box-shadow: 0 0 10px var(--neon-red);
+animation: pulseGlow 0.8s infinite;
+}
+
+/* Indicador de Uso de Recursos / Tokens */
+.hud-progress-bar {
+width: 100%;
+height: 4px;
+background: rgba(255, 255, 255, 0.1);
+border-radius: 2px;
+overflow: hidden;
+margin-top: 4px;
+}
+
+.hud-progress-fill {
+height: 100%;
+width: 68%;
+background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+box-shadow: 0 0 8px var(--neon-cyan);
+}
+
+/* Badges e Tags Futuristas */
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 4px 10px;
+border-radius: 4px;
+font-size: 0.7rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+font-family: monospace;
+}
+
+.badge-ai {
+background: rgba(168, 85, 247, 0.15);
+color: var(--neon-purple);
+border: 1px solid var(--neon-purple);
+box-shadow: inset 0 0 8px rgba(168, 85, 247, 0.2);
+}
+
+.badge-cyan {
+background: rgba(0, 240, 255, 0.15);
+color: var(--neon-cyan);
+border: 1px solid var(--neon-cyan);
+}
+
+/* Sistema de Alerta Holográfico */
+.alerta {
+position: relative;
+padding: 16px 20px;
+border-radius: var(--radius-sm);
+font-size: 0.9rem;
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: 12px;
+overflow: hidden;
+backdrop-filter: blur(8px);
+}
+
+.alerta::before {
+content: '';
+position: absolute;
+left: 0;
+top: 0;
+bottom: 0;
+width: 4px;
+}
+
+.alerta.sucesso {
+background: rgba(0, 255, 102, 0.08);
+color: var(--neon-green);
+border: 1px solid rgba(0, 255, 102, 0.3);
+}
+.alerta.sucesso::before {
+background: var(--neon-green);
+box-shadow: 0 0 10px var(--neon-green);
+}
+
+.alerta.erro {
+background: rgba(255, 51, 75, 0.08);
+color: var(--neon-red);
+border: 1px solid rgba(255, 51, 75, 0.3);
+}
+.alerta.erro::before {
+background: var(--neon-red);
+box-shadow: 0 0 10px var(--neon-red);
+}
+
+/* Formulário Cyberpunk com Controles Interativos */
+form {
+display: flex;
+flex-direction: column;
+gap: 20px;
+background: rgba(5, 10, 20, 0.5);
+padding: 24px;
+border-radius: var(--radius-sm);
+border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.form-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+label {
+font-size: 0.75rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+color: var(--neon-cyan);
+display: flex;
+justify-content: space-between;
+}
+
+label span.hint {
+color: var(--text-dim);
+font-weight: 400;
+text-transform: none;
+}
+
+input, textarea, select {
+width: 100%;
+padding: 14px 16px;
+font-family: inherit;
+font-size: 0.9rem;
+background: var(--bg-input);
+border: 1px solid rgba(0, 240, 255, 0.2);
+border-radius: var(--radius-sm);
+color: var(--text-primary);
+outline: none;
+transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+select {
+cursor: pointer;
+appearance: none;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%200f0ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+background-repeat: no-repeat;
+background-position: right 14px center;
+}
+
+input:focus, textarea:focus, select:focus {
+border-color: var(--neon-cyan);
+box-shadow: var(--glow-cyan), inset 0 0 8px rgba(0, 240, 255, 0.2);
+background: rgba(10, 20, 40, 0.9);
+}
+
+textarea {
+resize: vertical;
+min-height: 110px;
+}
+
+/* Grid de Botões Sci-Fi */
+.button-group {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+button {
+cursor: pointer;
+position: relative;
+border: 1px solid var(--neon-cyan);
+border-radius: var(--radius-sm);
+padding: 14px 24px;
+font-family: inherit;
+font-size: 0.85rem;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+background: rgba(0, 240, 255, 0.1);
+color: var(--neon-cyan);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+transition: all 0.25s ease;
+overflow: hidden;
+}
+
+button:hover {
+background: var(--neon-cyan);
+color: var(--bg-darkness);
+box-shadow: var(--glow-cyan);
+transform: translateY(-2px);
+}
+
+button:active {
+transform: translateY(0);
+}
+
+/* Botão AI Especial (Multiverse Gradient) */
+.btn-ai {
+border-color: var(--neon-purple);
+background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(255, 0, 127, 0.2));
+color: #fff;
+}
+
+.btn-ai:hover {
+background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+color: #fff;
+box-shadow: var(--glow-purple);
+border-color: transparent;
+}
+
+/* Botão Excluir / Destruição de Dados */
+.btn-excluir {
+background: rgba(255, 51, 75, 0.1);
+color: var(--neon-red);
+border: 1px solid rgba(255, 51, 75, 0.4);
+padding: 8px 16px;
+font-size: 0.75rem;
+}
+
+.btn-excluir:hover {
+background: var(--neon-red);
+color: #fff;
+box-shadow: var(--glow-red);
+border-color: var(--neon-red);
+}
+
+/* Lista de Projetos Estilo Módulos de Dados */
+ul {
+list-style: none;
+display: flex;
+flex-direction: column;
+gap: 16px;
+}
+
+li {
+position: relative;
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+padding: 20px;
+background: var(--bg-glass);
+border: 1px solid var(--border-subtle);
+border-left: 3px solid var(--neon-cyan);
+border-radius: var(--radius-sm);
+gap: 20px;
+transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+animation: hudSlideIn 0.4s ease-out;
+}
+
+li:hover {
+border-color: rgba(0, 240, 255, 0.4);
+border-left-color: var(--neon-purple);
+background: var(--bg-surface-hover);
+transform: translateX(4px);
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.project-info {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.project-header {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+li h2, li h3, li h4 {
+font-size: 1.1rem;
+font-weight: 700;
+color: #fff;
+letter-spacing: 0.02em;
+}
+
+li p {
+font-size: 0.88rem;
+color: var(--text-secondary);
+line-height: 1.6;
+}
+
+/* Módulos de Tags do Projeto */
+.project-tags {
+display: flex;
+gap: 6px;
+margin-top: 4px;
+}
+
+/* Skeleton & Scanning States */
+.skeleton {
+position: relative;
+background: rgba(15, 23, 42, 0.8);
+border-radius: 4px;
+overflow: hidden;
+}
+
+.skeleton::after {
+content: '';
+position: absolute;
+top: 0;
+right: 0;
+bottom: 0;
+left: 0;
+transform: translateX(-100%);
+background-image: linear-gradient(
+90deg,
+rgba(255, 255, 255, 0) 0,
+rgba(0, 240, 255, 0.1) 20%,
+rgba(168, 85, 247, 0.2) 60%,
+rgba(255, 255, 255, 0)
+);
+animation: scanline 1.8s infinite;
+}
+
+/* Utilitário */
+.oculto {
+display: none !important;
+}
+
+/* Animações Sci-Fi & Keyframes */
+@keyframes hudPowerOn {
+0% {
+opacity: 0;
+transform: scale(0.96) translateY(20px);
+filter: blur(10px);
+}
+100% {
+opacity: 1;
+transform: scale(1) translateY(0);
+filter: blur(0);
+}
+}
+
+@keyframes hudSlideIn {
+from {
+opacity: 0;
+transform: translateX(-15px);
+}
+to {
+opacity: 1;
+transform: translateX(0);
+}
+}
+
+@keyframes pulseGlow {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.3; }
+}
+
+@keyframes scanline {
+100% { transform: translateX(100%); }
+}
+
+/* Responsividade de Alta Fidelidade */
+@media (max-width: 640px) {
+body {
+padding: 16px 8px;
+}
+
+.container {
+padding: 20px 16px;
+gap: 20px;
+}
+
+.form-row {
+grid-template-columns: 1fr;
+}
+
+.button-group {
+flex-direction: column;
+}
+
+button {
+width: 100%;
+}
+
+li {
+flex-direction: column;
+align-items: stretch;
+}
+
+.btn-excluir {
+width: 100%;
+}
+}
